@@ -2,7 +2,7 @@
 
 ![Made with Love](https://img.shields.io/badge/Made%20with-Love-pink?style=for-the-badge&logo=data:image/svg%2bxml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+R2l0SHViIFNwb25zb3JzIGljb248L3RpdGxlPjxwYXRoIGQ9Ik0xNy42MjUgMS40OTljLTIuMzIgMC00LjM1NCAxLjIwMy01LjYyNSAzLjAzLTEuMjcxLTEuODI3LTMuMzA1LTMuMDMtNS42MjUtMy4wM0MzLjEyOSAxLjQ5OSAwIDQuMjUzIDAgOC4yNDljMCA0LjI3NSAzLjA2OCA3Ljg0NyA1LjgyOCAxMC4yMjdhMzMuMTQgMzMuMTQgMCAwIDAgNS42MTYgMy44NzZsLjAyOC4wMTcuMDA4LjAwMy0uMDAxLjAwM2MuMTYzLjA4NS4zNDIuMTI2LjUyMS4xMjUuMTText9bC0uMDAxLS4wMDMuMDA4LS4wMDMuMDI4LS4wMTdhMzMuMTQgMzMuMTQgMCAwIDAgNS42MTYtMy44NzZDMjAuOTM--0OS00LjUgNC4xMjUtNC41IDIuMDYgMCAzLjkxNCAxLjQ3OSA0LjU0NCAzLjY4NC4xNDMuNDk1LjU5Ni43OTYgMS4wODYuNzk2LjQ5LjAwMS45NDMtLjMwMiAxLjA4NS0uNzk2LjYzLTIuMjA1IDIuNDg0LTMuNjg0IDQuNTQ0LTMuNjg0IDIuMDA0IDAgNC4xMjUgMS43NDYgNC4xMjUgNC41IDAgMy4yMjUtMi4zNyA2LjIxNi01LjA0OCA4LjUyM3oiLz48L3N2Zz4=)
 
-**Waggo** es una pequeña propuesta de una app con interfaz moderna, fluida y con identidad de marca diseñada para conectar a los dueños de mascotas con los mejores servicios de cuidado como Paseos, Peluquería, Veterinario, Concursos, Entrenamiento y Guardería.
+**Waggo** es una pequeña propuesta de una app con interfaz moderna, fluida y con identidad de marca diseñada para conectar a los dueños de mascotas con los mejores servicios de cuidado como paseos, peluquería, veterinarios, concursos, entrenamientos y guarderías.
 
 ## Instrucciones de Instalación y Uso
 
