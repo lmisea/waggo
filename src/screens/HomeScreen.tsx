@@ -1,8 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -28,6 +31,12 @@ const CATEGORIES: ServiceCategory[] = [
   "Guardería",
 ];
 
+const FEATURED_CARD_WIDTH = 230;
+const SCROLL_SPEED = 1;
+const INTERVAL_MS = 30;
+const PAUSE_DURATION_MS = 1500;
+const PAUSE_TICKS = PAUSE_DURATION_MS / INTERVAL_MS;
+
 export default function HomeScreen() {
   const theme = useTheme();
   const { isDark, toggleTheme } = useThemeToggle();
@@ -43,6 +52,83 @@ export default function HomeScreen() {
     changeCategory,
     refetch,
   } = useServices();
+
+  const featuredListRef = useRef<FlatList>(null);
+  const scrollOffsetRef = useRef(0);
+  const contentWidthRef = useRef(0);
+  const layoutWidthRef = useRef(0);
+  const [shouldScroll, setShouldScroll] = useState(false);
+
+  const scrollDirectionRef = useRef(1);
+  const pauseTicksCounterRef = useRef(0);
+
+  useEffect(() => {
+    let scrollInterval: ReturnType<typeof setInterval> | null = null;
+
+    scrollOffsetRef.current = 0;
+    scrollDirectionRef.current = 1;
+    pauseTicksCounterRef.current = 0;
+    if (featuredListRef.current) {
+      featuredListRef.current.scrollToOffset({ offset: 0, animated: false });
+    }
+
+    if (shouldScroll && featuredServices.length > 0) {
+      scrollInterval = setInterval(() => {
+        if (pauseTicksCounterRef.current > 0) {
+          pauseTicksCounterRef.current -= 1;
+          return;
+        }
+
+        if (
+          featuredListRef.current &&
+          contentWidthRef.current > layoutWidthRef.current
+        ) {
+          const maxOffset = contentWidthRef.current - layoutWidthRef.current;
+          const currentOffset = scrollOffsetRef.current;
+          const direction = scrollDirectionRef.current;
+
+          let newOffset = currentOffset + SCROLL_SPEED * direction;
+
+          if (direction === 1 && newOffset >= maxOffset) {
+            newOffset = maxOffset;
+            scrollDirectionRef.current = -1;
+            pauseTicksCounterRef.current = PAUSE_TICKS;
+          } else if (direction === -1 && newOffset <= 0) {
+            newOffset = 0;
+            scrollDirectionRef.current = 1;
+            pauseTicksCounterRef.current = PAUSE_TICKS;
+          }
+
+          scrollOffsetRef.current = newOffset;
+          featuredListRef.current.scrollToOffset({
+            offset: newOffset,
+            animated: false,
+          });
+        }
+      }, INTERVAL_MS);
+    }
+
+    return () => {
+      if (scrollInterval) {
+        clearInterval(scrollInterval);
+      }
+    };
+  }, [shouldScroll, featuredServices, activeCategory]);
+
+  const checkScrollNecessity = () => {
+    if (contentWidthRef.current > 0 && layoutWidthRef.current > 0) {
+      const needsScrolling = contentWidthRef.current > layoutWidthRef.current;
+      if (needsScrolling !== shouldScroll) {
+        setShouldScroll(needsScrolling);
+      }
+    }
+  };
+
+  const handleFeaturedScroll = (
+    event: NativeSyntheticEvent<NativeScrollEvent>,
+  ) => {
+    scrollOffsetRef.current = event.nativeEvent.contentOffset.x;
+  };
 
   const renderContent = () => {
     // Nuestro estado de cargando con un mensaje bonito
@@ -173,6 +259,10 @@ export default function HomeScreen() {
                 marginBottom: theme.spacing.md,
                 marginTop: theme.spacing.sm,
               }}
+              onLayout={(event) => {
+                layoutWidthRef.current = event.nativeEvent.layout.width;
+                checkScrollNecessity();
+              }}
             >
               <Text
                 style={[
@@ -180,19 +270,33 @@ export default function HomeScreen() {
                   {
                     color: theme.colors.textPrimary,
                     marginBottom: theme.spacing.sm,
+                    paddingHorizontal: theme.spacing.md,
                   },
                 ]}
               >
                 Servicios Destacados ⭐
               </Text>
               <FlatList
+                ref={featuredListRef}
                 horizontal
                 data={featuredServices}
                 keyExtractor={(item) => `feat-${item.id}`}
                 style={{ flexGrow: 0 }}
                 showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <View style={{ width: 230, marginRight: theme.spacing.sm }}>
+                onScroll={handleFeaturedScroll}
+                scrollEventThrottle={16}
+                onContentSizeChange={(width) => {
+                  contentWidthRef.current = width;
+                  checkScrollNecessity();
+                }}
+                renderItem={({ item, index }) => (
+                  <View
+                    style={{
+                      width: FEATURED_CARD_WIDTH,
+                      marginLeft: index === 0 ? theme.spacing.md : 0,
+                      marginRight: theme.spacing.sm,
+                    }}
+                  >
                     <ServiceCard
                       service={item}
                       variant="featured"
@@ -218,7 +322,6 @@ export default function HomeScreen() {
           />
         )}
         contentContainerStyle={{
-          paddingHorizontal: theme.spacing.md,
           paddingBottom: theme.spacing.xl,
         }}
         showsVerticalScrollIndicator={false}
